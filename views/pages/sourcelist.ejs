@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html style="background-image: url('/bkgds/wave<%= Math.round(Math.random()*3)+1 %>.png');">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Kelp It Simple</title>
+    <link rel="icon" type="image/x-icon" href="/icons/logo.png">
+    <link rel="stylesheet" href="/css/sourcelist.css">
+</head>
+
+<body>
+    <script>
+        function search() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("searchinput");
+            filter = input.value.toUpperCase();
+            li = document.getElementsByClassName("general-card");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("h3")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+    <div class="header">
+        <button id="menu" onclick="toggleSidebar()"><img width='30px' src="/icons/filter.png"></img></button>
+        <script>
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar.getAttribute('data-isVisible') === 'false') {
+                    sidebar.style.display = '';
+                    sidebar.setAttribute('data-isVisible', 'true');
+                } else {
+                    sidebar.style.display = 'none';
+                    sidebar.setAttribute('data-isVisible', 'false');
+                }
+            }
+        </script>
+        <input id="searchinput" type="text" placeholder="🔎 What do you want to learn?" onkeyup="search()">
+    </div>
+
+    <div class="general-container">
+        <% sources.forEach(element=> { %>
+            <div class="general-card" data-type="<%= element.type %>" data-reviews="<%= element.rating %>"
+                    onclick="location.assign('./<%= element.name%>/reviews')">
+                <h3><%= element.name %></h3>
+                <p>Average rating: <%= element.rating %></p>
+                <p><%= element.reviews.length %> rating(s)</p>
+            </div>
+        <% }); %>
+    </div>
+
+    <div class="sidebar" id="sidebar" data-isVisible="false" style="display: none;">
+        <h2>Filters</h2>
+        <form id="filter-form">
+            <h3>Type</h3>
+            <ul>
+                <li><label><input type="checkbox" name="type" value="online course">Online Course</label></li>
+                <li><label><input type="checkbox" name="type" value="book">Book</label></li>
+                <li><label><input type="checkbox" name="type" value="Youtube">Youtube</label></li>
+            </ul>
+            <h3>Reviews</h3>
+            <ul>
+                <li><label><input type="checkbox" name="Reviews" value="1">1</label></li>
+                <li><label><input type="checkbox" name="Reviews" value="2">2</label></li>
+                <li><label><input type="checkbox" name="Reviews" value="3">3</label></li>
+                <li><label><input type="checkbox" name="Reviews" value="4">4</label></li>
+                <li><label><input type="checkbox" name="Reviews" value="5">5</label></li>
+            </ul>
+            <button type="submit">Apply Filters</button>
+        </form>
+    </div>
+
+    <br>
+    <div class="addDiv">
+        <h4 id="addLink" onclick="location.assign('./add')">+ Add new resource</h4>
+    </div>
+    <br>
+
+    <script>
+        document.getElementById('filter-form').addEventListener('submit', function (e) {
+            e.preventDefault(); 
+
+            const selectedTypes = Array.from(document.querySelectorAll('input[name="type"]:checked')).map(el => el.value);
+            const selectedReviews = Array.from(document.querySelectorAll('input[name="Reviews"]:checked')).map(el => parseInt(el.value));
+
+            const resources = document.querySelectorAll('.general-card');
+
+            resources.forEach(resource => {
+                const type = resource.getAttribute('data-type');
+                const reviews = parseInt(resource.getAttribute('data-reviews'));
+
+                const matchesType = selectedTypes.length === 0 || selectedTypes.includes(type);
+                const matchesReviews = selectedReviews.length === 0 || selectedReviews.includes(reviews);
+
+                if (matchesType && matchesReviews) {
+                    resource.style.display = ''; 
+                } else {
+                    resource.style.display = 'none';  
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

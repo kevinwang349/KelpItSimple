@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Kelp It Simple</title>
+  <link rel="icon" type="image/x-icon" href="/icons/logo.png">
+  <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+  <div class="header">
+    <div class="logo">
+      <img id="logo-image" src="/icons/logo.png">
+      <h2>Kelp-it-Simple</h1><br>
+      </div>
+    <h1>What do you want to learn?</h1>
+  </div>
+  <table class="general-container">
+    <% sources.forEach(row => {%>
+        <tr>
+            <% row.forEach(element => {%>
+                <td class="general-card" onclick="location.assign('./<%= element.name%>/list')">
+                  <img class="card-image" src="/bkgds/<%= element.img %>">
+                  <p><%= element.name%></p>
+                </td>
+            <%});%>
+        </tr>
+    <%});%>
+  </table>
+  
+</body>
+
+</html>

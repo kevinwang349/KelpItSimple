@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Kelp It Simple</title>
+  <link rel="icon" type="image/x-icon" href="/icons/logo.png">
+  <link rel="stylesheet" href="/css/add.css">
+</head>
+
+<body>
+    <div class="header">
+        <h1>Add a new resource for learning <%= category %></h1>
+    </div>
+    <div class="form">
+        <form id="addform">
+            <div class="top">
+                <input class="text" type="text" id="name" placeholder="What is its name?"><br><br>
+                <input class="text" type="text" id="link" placeholder="Please provide a link to the resource."><br>
+            </div>
+            <br>
+            <div class="bottom">
+                <h4>What is the type of your resource?</h4>
+                <input class="radio" type="radio" name="type" id="1" value="online course"><label for="1">Online Course</label><br>
+                <input class="radio" type="radio" name="type" id="2" value="book"><label for="2">E-Book</label><br>
+                <input class="radio" type="radio" name="type" id="3" value="Youtube"><label for="3">Youtube video or playlist</label><br>
+                <input class="radio" type="radio" name="type" id="4" value="other"><label for="4">Other</label><br>
+            </div>
+        </form>
+        <br>
+        <button id="finish">Submit your resource</button>
+    </div>
+    
+    <script>
+        document.getElementById("addform").addEventListener('submit', (e)=>{
+            e.preventDefault(); // prevent the form from automatically reloading randomly
+        })
+
+        document.getElementById("finish").addEventListener('click', (e)=>{
+            // Get the review data
+            let type='';
+            const radios=document.getElementsByName('type');
+            for(const radio of radios){
+                if(radio.checked){
+                    type=radio.value;
+                    break;
+                }
+            }
+            const name=document.getElementById('name').value;
+            name.innerText='';
+            const link=document.getElementById('link').value;
+            link.innerText='';
+
+            if(name.length<1 || link.length<1){
+                alert('Please input the name and link for your resource to add it to our database.');
+            }
+
+            // Send post request to server to save the review
+            const request=new XMLHttpRequest();
+            request.open('POST', 'http://localhost:3000/addResource', true);
+            request.setRequestHeader("Content-Type", "application/json");
+            request.send(JSON.stringify({
+                'category': `<%= category %>`,
+                'name': name,
+                'link': link,
+                'type': type
+            }));
+            
+            alert('Your resource has been successfully submitted! Return to the previous page and refresh to see your resource.');
+        })
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Kelp It Simple</title>
+  <link rel="icon" type="image/x-icon" href="/icons/logo.png">
+  <link rel="stylesheet" href="/css/source.css">
+</head>
+
+<body>
+    <div class="body-container">
+    <div class="header">
+        <a href="<%= link %>"><h1><%= title %></h1></a>
+        <h2>Average rating: <%= average%></h2>
+        <h2 id="reviewtitle">Leave a review:</h2>
+    </div>
+    <div class="form">
+        <form id="reviewform">
+            <input type="text" id="username" placeholder="What's your name?"><br>
+            <label for="username">Your review will be labelled with this username.</label>
+            <h3>Your review</h3>
+            <table>
+                <tr>
+                    <td><label for="1">1</label></td>
+                    <td><label for="2">2</label></td>
+                    <td><label for="3">3</label></td>
+                    <td><label for="4">4</label></td>
+                    <td><label for="5">5</label></td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="rating" id="1" value="1"></td>
+                    <td><input type="radio" name="rating" id="2" value="2"></td>
+                    <td><input type="radio" name="rating" id="3" value="3"></td>
+                    <td><input type="radio" name="rating" id="4" value="4" checked></td>
+                    <td><input type="radio" name="rating" id="5" value="5"></td>
+                </tr>
+            </table>
+            <h3>Your comment</h3>
+            <textarea id="comment" placeholder="What was your experience learning with this resource?"></textarea><br>
+        </form>
+        <button id="finish">Submit your review</button>
+        <!-- <p>Refresh to see changes</p> -->
+    </div>
+    <div class="review-table">
+        <h2>Reviews from other users:</h2>
+        <div id="reviewlist">
+            <% reviews.forEach(review => {%>
+                <div class="review">
+                    <p class="rating"><%= review.rating %> out of 5</p>
+                    <p><%= review.comment %></p>
+                    <p>by <%= review.username %></p>
+                </div>
+            <%});%>
+        </div>
+    </div>
+    
+</div>
+    <script>
+        document.getElementById("reviewform").addEventListener('submit', (e)=>{
+            e.preventDefault(); // prevent the form from automatically reloading randomly
+        })
+
+        document.getElementById("finish").addEventListener('click', (e)=>{
+            // Get the review data
+            let rating=0;
+            const radios=document.getElementsByName('rating');
+            for(const radio of radios){
+                if(radio.checked){
+                    rating=parseInt(radio.value);
+                    break;
+                }
+            }
+            const comment=document.getElementById('comment').value;
+            comment.innerText='';
+            const username=document.getElementById('username').value;
+
+            if(username.length<1){
+                alert('Please input your name (or a username) to submit a review');
+            }
+
+            // Send post request to server to save the review
+            const request=new XMLHttpRequest();
+            request.open('POST', 'http://localhost:3000/review', true);
+            request.setRequestHeader("Content-Type", "application/json");
+            request.send(JSON.stringify({
+                'category': `<%= category %>`,
+                'source': `<%= title %>`,
+                'name': username,
+                'rating': rating,
+                'comment': comment
+            }));
+
+            alert('Your review has been successfully submitted! Refresh to see your review.');
+        })
+
+    </script>
+</body>
+
+</html>
